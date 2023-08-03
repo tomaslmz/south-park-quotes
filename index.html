@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    * {
+        font-family: Arial, Helvetica, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        width: 100vw;
+        height: 100vh;
+    }
+
+    header {
+        width: 100vw;
+        height: 50px;
+    }
+
+    .language {
+        padding: 10px;
+        margin-top: 10px;
+        margin-left: 10px;
+        
+        border-radius: 10px;
+        cursor: pointer;
+    }
+
+    main {
+        width: 100vw;
+        height: calc(100vh - 100px);
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+
+        gap: 20px;
+    }
+
+    .quote {
+        width: 50vw;
+        min-height: 60px;
+        padding: 10px;
+        background-color: rgb(238, 238, 238);
+        border-radius: 10px;
+    }
+
+    .button {
+        background-color: rgb(255, 47, 47);
+        border: none;
+        color: white;
+    }
+
+    .button:hover {
+        background-color: rgb(245, 105, 105);
+    }
+    
+    .get {
+        padding: 10px;
+        background-color: rgb(255, 47, 47);
+        border: none;
+        border-radius: 10px;
+        color: white;
+        cursor: pointer;
+    }
+</style>
+<body>
+    <header>
+        <button class="language button" onclick="changeLanguage()">EN</button>
+    </header>
+    <main>
+        <div class="quote">
+
+        </div>
+        <button onclick="getQuote()" class="get button">Get a quote!</button>
+    </main>
+    
+</body>
+<script>
+    const url = 'https://southparkquotes.onrender.com/v1/quotes';
+    var quote;
+    var translatedQuote;
+    var language = 'EN';
+
+    const changeLanguage = () => {
+        language = language === 'EN' ? 'PT-BR' : 'EN';
+        document.querySelector('.language').innerHTML = language;
+
+        const content = language === 'EN' ? quote[0].quote : translatedQuote;
+
+        document.querySelector('.quote').innerHTML = content + '<br><br> - ' + quote[0].character;
+
+        const button = language === 'EN' ? 'Get a quote!' : 'Consiga uma frase!';
+
+        document.querySelector('.get').innerHTML = button;
+    }
+
+    const getQuote = async () => {
+        const response = await fetch(url);
+        quote = await response.json();
+
+
+        
+
+        const translate = await fetch('https://api.mymemory.translated.net/get?q=' + quote[0].quote.replaceAll(' ', '%20') + '&langpair=en|pt');
+
+        const responseTranslate = await translate.json();
+
+        translatedQuote = await responseTranslate.responseData.translatedText;
+
+
+
+        const content = language === 'EN' ? quote[0].quote : translatedQuote;
+
+        document.querySelector('.quote').innerHTML = content + '<br><br> - ' + quote[0].character;
+    }
+</script>
+</html>
